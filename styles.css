@@ -1,0 +1,29 @@
+body {
+    font-family: 'Century Gothic', 'Arial', sans-serif;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #061322;
+    color: #fff;
+}
+
+header {
+    text-align: center;
+    padding: 2em;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+h1 {
+    margin-top: 20px;
+    font-size: 24px;
+}
+
+.subtitle {
+    margin-top: 10px;
+    font-size: 18px;
+}
