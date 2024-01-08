@@ -1,24 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
     <title>Obrolin Space</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/128.png">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            cursor: none;
+            color: #fff;
+        }
+
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-spinner {
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        header {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo,
+        .divider,
+        .text-container {
+            opacity: 0;
+            margin: 20px 0;
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .logo,
+        .divider {
+            max-width: 80%;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(-5px);
+            }
+
+            50% {
+                transform: translateY(5px);
+            }
+        }
+
+        .text-container {
+            text-align: center;
+            max-width: 80%;
+            margin: 0 auto;
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .text-container p {
+            margin: 0 0 10px;
+            font-size: 16px;
+            line-height: 1.3;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-family: 'Century Gothic', sans-serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .divider {
+            width: 600px;
+            height: 2px;
+            background-color: #fff;
+            margin: 20px 0;
+        }
+    </style>
 </head>
+
 <body>
 
+    <canvas id="starfield"></canvas>
+
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+    </div>
+
     <header>
-        <div class="content">
-            <img src="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/White.png" alt="Obrolin Space" class="logo">
-            <h1>Exciting Things Are Happening!</h1>
-            <p class="subtitle">Stay tuned for the launch of your new favorite AI companion.</p>
-            <div class="cool-column">
-                <div class="cool-effect"></div>
-            </div>
-            <p class="copyright">© 2024 Obrolin Space. All rights reserved.</p>
+        <img src="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/White.png" alt="Obrolin Space Logo"
+            class="logo">
+        <div class="divider"></div>
+        <div class="text-container">
+            <p>We're developing an awesome AI companion just for you. Get ready for engaging conversations, surprises, and positive vibes. Stay tuned for updates!🚀</p>
+            <p>Thank you for your patience and enthusiasm. Keep an eye on this space for the latest announcements. Your interest means a lot to us!</p>
         </div>
     </header>
 
+    <script>
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+
+        let width, height, stars, lastMouseX, lastMouseY, mouseTrail;
+
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        stars = [];
+        mouseTrail = [];
+        lastMouseX = width / 2;
+        lastMouseY = height / 2;
+
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+
+        const logo = document.querySelector('.logo');
+        const divider = document.querySelector('.divider');
+        const textContainer = document.querySelector('.text-container');
+
+        logo.addEventListener('selectstart', function (e) {
+            e.preventDefault();
+        });
+
+        [logo, divider, textContainer].forEach(element => {
+            element.style.userSelect = 'none';
+        });
+
+        for (let i = 0; i < 250; i++) {
+            stars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                size: Math.random() * 1,
+                blink: Math.random() < 0.5
+            });
+        }
+
+        for (let i = 0; i < 13; i++) {
+            mouseTrail.push({
+                x: lastMouseX,
+                y: lastMouseY,
+                size: Math.random() * 2
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            stars.forEach(star => {
+                const parallaxX = (star.x - lastMouseX) * 0.030;
+                const parallaxY = (star.y - lastMouseY) * 0.030;
+
+                if (star.blink) {
+                    star.opacity = Math.sin(Date.now() * 0.002) * 0.5 + 0.5; 
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(star.x + parallaxX, star.y + parallaxY, star.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = "#fff";
+                    ctx.beginPath();
+                    ctx.arc(star.x + parallaxX, star.y + parallaxY, star.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            mouseTrail.forEach((trail, index) => {
+                const nextTrail = mouseTrail[index + 1] || mouseTrail[0];
+                const opacity = (index + 1) / mouseTrail.length;
+                ctx.beginPath();
+                const fixedCursorSize = 2;
+                ctx.arc(trail.x, trail.y, fixedCursorSize, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.fill();
+                if (index === 0) {
+                    trail.x += (lastMouseX - trail.x) * 0.4;
+                    trail.y += (lastMouseY - trail.y) * 0.4;
+                } else {
+                    trail.x += (nextTrail.x - trail.x) * 0.4;
+                    trail.y += (nextTrail.y - trail.y) * 0.4;
+                }
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('mousemove', (event) => {
+            lastMouseX = event.clientX;
+            lastMouseY = event.clientY;
+        });
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        draw();
+
+        setTimeout(() => {
+            document.querySelector('.loading-container').style.opacity = '0';
+            document.querySelector('.loading-container').style.pointerEvents = 'none';
+
+            [logo, divider, textContainer].forEach(element => {
+                element.style.opacity = '1';
+            });
+        }, 600);
+    </script>
 </body>
+
 </html>
