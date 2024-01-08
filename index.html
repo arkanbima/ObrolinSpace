@@ -7,45 +7,54 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/128.png">
     <title>Obrolin Space</title>
     <style>
-        body,
-        html {
+        * {
             margin: 0;
             padding: 0;
-            background-color: #111; /* Dark background */
-            height: 100vh;
-            overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            cursor: none;
-            color: #fff; /* White text */
+            box-sizing: border-box;
         }
 
-        #starfield {
+        body {
+            background-color: #111;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        #obrolin {
             position: fixed;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
 
         header {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 0.5s ease-out;
             z-index: 10;
             text-align: center;
-            display: none;
+        }
+
+        header.visible {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
         }
 
         .logo {
-            max-width: 55%;
+            max-width: 80%;
             animation: float 5s ease-in-out infinite;
-            display: none; /* Initially hide the logo */
         }
 
         @keyframes float {
             0%, 100% {
                 transform: translateY(-10px);
             }
-
             50% {
                 transform: translateY(10px);
             }
@@ -55,9 +64,9 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #111; /* Dark background */
+            width: 100%;
+            height: 100%;
+            background: #111;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -67,69 +76,51 @@
             transition: opacity 0.5s ease;
         }
 
-        .loading-spinner {
-            border: 8px solid rgba(255, 255, 255, 0.3);
-            border-top: 8px solid #fff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+        @media (max-width: 768px) {
+            .logo {
+                max-width: 100%;
+            }
         }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
+        @media (min-width: 768px) {
+            .loading-container {
+                opacity: 0;
+                pointer-events: none;
             }
         }
     </style>
 </head>
 
 <body>
-
-    <canvas id="starfield"></canvas>
-
+    <canvas id="obrolin"></canvas>
     <div class="loading-container">
         <div class="loading-spinner"></div>
     </div>
-
     <header>
         <img src="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/White.png" alt="Obrolin Space Logo"
             class="logo">
     </header>
-
     <script>
-        const canvas = document.getElementById('starfield');
+        const canvas = document.getElementById('obrolin');
         const ctx = canvas.getContext('2d');
+        const width = canvas.width = window.innerWidth;
+        const height = canvas.height = window.innerHeight;
+        let stars = [];
+        let lastMouseX = width / 2;
+        let lastMouseY = height / 2;
+        let mouseTrail = [];
 
-        let width, height, stars, lastMouseX, lastMouseY, mouseTrail;
-
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        stars = [];
-        mouseTrail = [];
-        lastMouseX = width / 2;
-        lastMouseY = height / 2;
-
-        document.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
 
         const logo = document.querySelector('.logo');
-
-        logo.addEventListener('selectstart', function (e) {
-            e.preventDefault();
-        });
-
+        logo.addEventListener('selectstart', (e) => e.preventDefault());
         logo.style.userSelect = 'none';
+
         for (let i = 0; i < 200; i++) {
             stars.push({
                 x: Math.random() * width,
                 y: Math.random() * height,
-                size: Math.random() * 1
+                size: Math.random() * 1,
             });
         }
 
@@ -137,17 +128,18 @@
             mouseTrail.push({
                 x: lastMouseX,
                 y: lastMouseY,
-                size: Math.random() * 2
+                size: Math.random() * 2,
             });
         }
 
         function draw() {
             ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#fff';
 
-            ctx.fillStyle = "#fff";
-            stars.forEach(star => {
+            stars.forEach((star) => {
                 const parallaxX = (star.x - lastMouseX) * 0.025;
                 const parallaxY = (star.y - lastMouseY) * 0.025;
+
                 ctx.beginPath();
                 ctx.arc(star.x + parallaxX, star.y + parallaxY, star.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -156,11 +148,13 @@
             mouseTrail.forEach((trail, index) => {
                 const nextTrail = mouseTrail[index + 1] || mouseTrail[0];
                 const opacity = (index + 1) / mouseTrail.length;
+
                 ctx.beginPath();
-				const fixedCursorSize = 2; // Adjust the size as needed
-				ctx.arc(trail.x, trail.y, fixedCursorSize, 0, Math.PI * 2);
+                const fixedCursorSize = 2;
+                ctx.arc(trail.x, trail.y, fixedCursorSize, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
                 ctx.fill();
+
                 if (index === 0) {
                     trail.x += (lastMouseX - trail.x) * 0.4;
                     trail.y += (lastMouseY - trail.y) * 0.4;
@@ -179,16 +173,16 @@
         });
 
         window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         });
 
         draw();
+
         setTimeout(() => {
             document.querySelector('.loading-container').style.opacity = '0';
             document.querySelector('.loading-container').style.pointerEvents = 'none';
-            document.querySelector('header').style.display = 'block';
-            document.querySelector('.logo').style.display = 'block';
+            document.querySelector('header').classList.add('visible');
         }, 500);
     </script>
 </body>
