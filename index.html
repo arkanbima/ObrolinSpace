@@ -73,7 +73,7 @@
             flex-direction: column;
             z-index: 9999;
             opacity: 1;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease;			
         }
 
         @media (max-width: 768px) {
@@ -88,6 +88,14 @@
                 pointer-events: none;
             }
         }
+
+        .coming-soon {
+            font-size: 20px;
+            margin-top: 40px;
+			transition: opacity 0.5s ease;
+			animation: float 5s ease-in-out infinite;
+			font-family: 'Century Gothic', sans-serif; 
+        }
     </style>
 </head>
 
@@ -99,6 +107,7 @@
     <header>
         <img src="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/White.png" alt="Obrolin Space Logo"
             class="logo">
+        <div class="coming-soon">"We will bring a touch of magic to your conversations – stay tuned for the enchanting arrival of your emotionally connected AI Companion!".</div>
     </header>
     <script>
         const canvas = document.getElementById('obrolin');
