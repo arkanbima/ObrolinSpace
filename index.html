@@ -3,33 +3,61 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Obrolin Space</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/128.png">
+    <title>Obrolin Space</title>
     <style>
         body,
         html {
             margin: 0;
             padding: 0;
-            background-color: #111;
-            min-height: 100vh;
+            background-color: #111; /* Dark background */
+            height: 100vh;
+            overflow: hidden;
             font-family: 'Arial', sans-serif;
             cursor: none;
-            color: #fff;
+            color: #fff; /* White text */
         }
 
         #starfield {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+        }
+
+        header {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            display: none;
+        }
+
+        .logo {
+            max-width: 55%;
+            animation: float 5s ease-in-out infinite;
+            display: none; /* Initially hide the logo */
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(-10px);
+            }
+
+            50% {
+                transform: translateY(10px);
+            }
         }
 
         .loading-container {
             position: fixed;
-            inset: 0;
-            background: #111;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #111; /* Dark background */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -40,20 +68,12 @@
         }
 
         .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #fff;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid #fff;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
-        }
-
-        .loading-bar {
-            width: 100%;
-            height: 2px;
-            background-color: #fff;
-            margin-top: 50px;
-            animation: loading 2s linear infinite;
         }
 
         @keyframes spin {
@@ -65,89 +85,6 @@
                 transform: rotate(360deg);
             }
         }
-
-        @keyframes loading {
-            0% {
-                width: 0;
-            }
-
-            100% {
-                width: 100%;
-            }
-        }
-
-        header {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo,
-        .divider,
-        .text-container {
-            opacity: 0;
-            margin: 1rem 0;
-            animation: float 5s ease-in-out infinite;
-            max-width: calc(100vw - 2rem);
-        }
-
-        .logo,
-        .divider {
-            max-width: 50%;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(-0.5rem);
-            }
-
-            50% {
-                transform: translateY(0.5rem);
-            }
-        }
-
-        .text-container {
-            text-align: center;
-            width: 80%; /* Set width relative to the parent container */
-            max-width: 600px; /* Set max-width if you want to limit the width */
-            margin: 0 auto; /* Center the text horizontally */
-        }
-
-        .text-container h1 {
-            font-size: 24px; /* Set a fixed font size for the header */
-            color: #fff;
-            font-family: 'Century Gothic', sans-serif;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .text-container h2 {
-            font-size: 20px; /* Set a fixed font size for the subheader */
-            color: #fff;
-            font-family: 'Century Gothic', sans-serif;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .divider {
-            height: 2px;
-            background-color: #fff;
-            margin: 20px 0;
-        }
-
-        img {
-            pointer-events: none;
-            user-select: none;
-            touch-action: manipulation;
-            max-width: 100%;
-        }
     </style>
 </head>
 
@@ -157,16 +94,11 @@
 
     <div class="loading-container">
         <div class="loading-spinner"></div>
-        <div class="loading-bar"></div>
     </div>
 
     <header>
         <img src="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/White.png" alt="Obrolin Space Logo"
             class="logo">
-        <div class="divider"></div>
-        <div class="text-container">
-            <p>We're developing an awesome AI companion just for you. Get ready for engaging conversations, surprises, and positive vibes. Stay tuned for updates!🚀</p>
-        </div>
     </header>
 
     <script>
@@ -175,13 +107,8 @@
 
         let width, height, stars, lastMouseX, lastMouseY, mouseTrail;
 
-        function initializeCanvasSize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-
-        initializeCanvasSize();
-
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
         stars = [];
         mouseTrail = [];
         lastMouseX = width / 2;
@@ -192,23 +119,17 @@
         });
 
         const logo = document.querySelector('.logo');
-        const divider = document.querySelector('.divider');
-        const textContainer = document.querySelector('.text-container');
 
         logo.addEventListener('selectstart', function (e) {
             e.preventDefault();
         });
 
-        [logo, divider, textContainer].forEach(element => {
-            element.style.userSelect = 'none';
-        });
-
-        for (let i = 0; i < 250; i++) {
+        logo.style.userSelect = 'none';
+        for (let i = 0; i < 200; i++) {
             stars.push({
                 x: Math.random() * width,
                 y: Math.random() * height,
-                size: Math.random() * 1,
-                blink: Math.random() < 0.5
+                size: Math.random() * 1
             });
         }
 
@@ -223,30 +144,21 @@
         function draw() {
             ctx.clearRect(0, 0, width, height);
 
+            ctx.fillStyle = "#fff";
             stars.forEach(star => {
-                const parallaxX = (star.x - lastMouseX) * 0.030;
-                const parallaxY = (star.y - lastMouseY) * 0.030;
-
-                if (star.blink) {
-                    star.opacity = Math.sin(Date.now() * 0.002) * 0.5 + 0.5;
-                    ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
-                    ctx.beginPath();
-                    ctx.arc(star.x + parallaxX, star.y + parallaxY, star.size, 0, Math.PI * 2);
-                    ctx.fill();
-                } else {
-                    ctx.fillStyle = "#fff";
-                    ctx.beginPath();
-                    ctx.arc(star.x + parallaxX, star.y + parallaxY, star.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
+                const parallaxX = (star.x - lastMouseX) * 0.025;
+                const parallaxY = (star.y - lastMouseY) * 0.025;
+                ctx.beginPath();
+                ctx.arc(star.x + parallaxX, star.y + parallaxY, star.size, 0, Math.PI * 2);
+                ctx.fill();
             });
 
             mouseTrail.forEach((trail, index) => {
                 const nextTrail = mouseTrail[index + 1] || mouseTrail[0];
                 const opacity = (index + 1) / mouseTrail.length;
                 ctx.beginPath();
-                const fixedCursorSize = 2;
-                ctx.arc(trail.x, trail.y, fixedCursorSize, 0, Math.PI * 2);
+				const fixedCursorSize = 2; // Adjust the size as needed
+				ctx.arc(trail.x, trail.y, fixedCursorSize, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
                 ctx.fill();
                 if (index === 0) {
@@ -267,19 +179,17 @@
         });
 
         window.addEventListener('resize', () => {
-            initializeCanvasSize();
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         });
 
         draw();
-
         setTimeout(() => {
             document.querySelector('.loading-container').style.opacity = '0';
             document.querySelector('.loading-container').style.pointerEvents = 'none';
-
-            [logo, divider, textContainer].forEach(element => {
-                element.style.opacity = '1';
-            });
-        }, 600);
+            document.querySelector('header').style.display = 'block';
+            document.querySelector('.logo').style.display = 'block';
+        }, 1000);
     </script>
 </body>
 
