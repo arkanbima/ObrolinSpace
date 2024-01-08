@@ -13,7 +13,6 @@
             padding: 0;
             background-color: #111;
             height: 100vh;
-            overflow: hidden;
             font-family: 'Arial', sans-serif;
             cursor: none;
             color: #fff;
@@ -147,8 +146,13 @@
 
         let width, height, stars, lastMouseX, lastMouseY, mouseTrail;
 
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
+        function initializeCanvasSize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        initializeCanvasSize();
+
         stars = [];
         mouseTrail = [];
         lastMouseX = width / 2;
@@ -195,7 +199,7 @@
                 const parallaxY = (star.y - lastMouseY) * 0.030;
 
                 if (star.blink) {
-                    star.opacity = Math.sin(Date.now() * 0.002) * 0.5 + 0.5; 
+                    star.opacity = Math.sin(Date.now() * 0.002) * 0.5 + 0.5;
                     ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
                     ctx.beginPath();
                     ctx.arc(star.x + parallaxX, star.y + parallaxY, star.size, 0, Math.PI * 2);
@@ -234,8 +238,7 @@
         });
 
         window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
+            initializeCanvasSize();
         });
 
         draw();
