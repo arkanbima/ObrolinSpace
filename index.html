@@ -1,198 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/128.png">
+    <link rel="stylesheet" href="styles.css">
     <title>Obrolin Space</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: #111;
-            font-family: 'Arial', sans-serif;
-            color: #fff;
-            overflow: hidden;
-            cursor: none;
-        }
-
-        #obrolin {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        header {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            opacity: 0;
-            transition: all 0.5s ease-out;
-            z-index: 10;
-            text-align: center;
-        }
-
-        header.visible {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-
-        .logo {
-            max-width: 80%;
-            width: 300px; /* Adjust the width as needed for larger logo size on mobile */
-            height: auto;
-            animation: float 5s ease-in-out infinite;
-        }
-
-        .loading-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #111;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            z-index: 9999;
-            opacity: 1;
-            transition: opacity 0.5s ease;			
-        }
-
-        @media (max-width: 768px) {
-            .logo {
-                max-width: 100%;
-                width: 200px; /* Adjust the width for smaller screens */
-            }
-            
-            .coming-soon {
-                font-size: 16px; /* Adjust the font size for smaller screens */
-                margin-top: 20px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .loading-container {
-                opacity: 0;
-                pointer-events: none;
-            }
-        }
-
-        .coming-soon {
-            font-size: 20px;
-            margin-top: 40px;
-			transition: opacity 0.5s ease;
-			animation: float 5s ease-in-out infinite;
-			font-family: 'Century Gothic', sans-serif; 
-        }
-    </style>
 </head>
-
 <body>
-    <canvas id="obrolin"></canvas>
-    <div class="loading-container">
-        <div class="loading-spinner"></div>
-    </div>
+
     <header>
-        <img src="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/White.png" alt="Obrolin Space Logo"
-            class="logo">
-        <div class="coming-soon">"We will bring a touch of magic to your conversations – stay tuned for the enchanting arrival of your emotionally connected AI Companion!".</div>
+        <div class="content">
+            <img src="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/White.png" alt="Obrolin Space" class="logo">
+            <h1>Exciting Things Are Happening!</h1>
+            <p class="subtitle">Stay tuned for the launch of your new favorite AI companion.</p>
+            <div class="cool-column">
+                <div class="cool-effect"></div>
+            </div>
+            <p class="copyright">© 2024 Obrolin Space. All rights reserved.</p>
+        </div>
     </header>
-    <script>
-        const canvas = document.getElementById('obrolin');
-        const ctx = canvas.getContext('2d');
-        const width = canvas.width = window.innerWidth;
-        const height = canvas.height = window.innerHeight;
-        let stars = [];
-        let lastMouseX = width / 2;
-        let lastMouseY = height / 2;
-        let mouseTrail = [];
 
-        document.addEventListener('contextmenu', (e) => e.preventDefault());
-
-        const logo = document.querySelector('.logo');
-        logo.addEventListener('selectstart', (e) => e.preventDefault());
-        logo.style.userSelect = 'none';
-
-        for (let i = 0; i < 200; i++) {
-            stars.push({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                size: Math.random() * 1,
-            });
-        }
-
-        for (let i = 0; i < 13; i++) {
-            mouseTrail.push({
-                x: lastMouseX,
-                y: lastMouseY,
-                size: Math.random() * 2,
-            });
-        }
-
-        function draw() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = '#fff';
-
-            stars.forEach((star) => {
-                const parallaxX = (star.x - lastMouseX) * 0.025;
-                const parallaxY = (star.y - lastMouseY) * 0.025;
-
-                ctx.beginPath();
-                ctx.arc(star.x + parallaxX, star.y + parallaxY, star.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            mouseTrail.forEach((trail, index) => {
-                const nextTrail = mouseTrail[index + 1] || mouseTrail[0];
-                const opacity = (index + 1) / mouseTrail.length;
-
-                ctx.beginPath();
-                const fixedCursorSize = 2;
-                ctx.arc(trail.x, trail.y, fixedCursorSize, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-                ctx.fill();
-
-                if (index === 0) {
-                    trail.x += (lastMouseX - trail.x) * 0.4;
-                    trail.y += (lastMouseY - trail.y) * 0.4;
-                } else {
-                    trail.x += (nextTrail.x - trail.x) * 0.4;
-                    trail.y += (nextTrail.y - trail.y) * 0.4;
-                }
-            });
-
-            requestAnimationFrame(draw);
-        }
-
-        window.addEventListener('mousemove', (event) => {
-            lastMouseX = event.clientX;
-            lastMouseY = event.clientY;
-        });
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        draw();
-
-        setTimeout(() => {
-            document.querySelector('.loading-container').style.opacity = '0';
-            document.querySelector('.loading-container').style.pointerEvents = 'none';
-            document.querySelector('header').classList.add('visible');
-        }, 500);
-    </script>
 </body>
-
 </html>
