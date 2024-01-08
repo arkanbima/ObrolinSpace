@@ -5,15 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/128.png">
     <link rel="stylesheet" href="styles.css">
-    <title>Obrolin Space</title>
 </head>
 <body>
+    <div id="loading-screen">
+        <div id="loading-spinner"></div>
+    </div>
 
     <header>
         <div class="content">
             <img src="https://raw.githubusercontent.com/arkanbima/ObrolinSpace/main/White.png" alt="Obrolin Space" class="logo">
-            <h1>Exciting Things Are Happening!</h1>
-            <p class="subtitle">Stay tuned for the launch of your new favorite AI companion.</p>
+            <h1>Your Future AI Companion</h1>
+            <p class="subtitle">Crafted to Bring Joy and Warmth to Your Every Interaction.</p>
             <div class="cool-column">
                 <div class="cool-effect"></div>
             </div>
@@ -21,5 +23,10 @@
         </div>
     </header>
 
+	<script>
+		setTimeout(function () {
+			document.getElementById('loading-screen').classList.add('hidden');
+		}, 500); // Adjust the duration as needed (in milliseconds)
+	</script>
 </body>
 </html>
